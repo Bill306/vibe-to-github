@@ -1,0 +1,64 @@
+# {{PROJECT_NAME}}
+
+{{ONE_SENTENCE_SCOPE_AND_VALUE}}
+
+## Problem
+
+{{WHO_NEEDS_THIS_COLLECTION_AND_WHAT_DISCOVERY_OR_LEARNING_PROBLEM_IT_SOLVES}}
+
+## Features
+
+- **{{CATEGORY_OR_CAPABILITY}}** — {{CONSISTENT_ONE_SENTENCE_DESCRIPTION}}
+
+## Contents
+
+- [{{CATEGORY_NAME}}](#{{CATEGORY_ANCHOR}})
+
+## Installation or Access
+
+```text
+{{VERIFIED_ACCESS_OR_DOWNLOAD_INSTRUCTIONS}}
+```
+
+## Usage
+
+1. {{HOW_TO_FIND_OR_USE_AN_ITEM}}
+2. {{HOW_TO_FOLLOW_THE_RECOMMENDED_PATH}}
+
+## Input and Output Example
+
+**Input or need**
+
+```text
+{{REALISTIC_QUERY_OR_GOAL}}
+```
+
+**Output or path**
+
+```text
+{{REALISTIC_RESULT_OR_RECOMMENDED_PATH}}
+```
+
+## {{CATEGORY_NAME}}
+
+- [{{ITEM_NAME}}]({{VERIFIED_URL}}) — {{WHY_IT_IS_INCLUDED}}
+
+## Inclusion Criteria
+
+- {{CLEAR_CURATED_CRITERION}}
+
+## Known Limitations
+
+- {{SCOPE_BOUNDARY_OR_MAINTENANCE_LIMIT}}
+
+## Safety and Content Policy
+
+{{SAFETY_PRIVACY_AND_REPORTING_GUIDANCE}}
+
+## Contributing
+
+{{HOW_TO_PROPOSE_CHANGES}}
+
+## License
+
+{{CONTENT_LICENSE_CODE_LICENSE_SPLIT_OR_ALL_RIGHTS_RESERVED}}
