@@ -78,8 +78,10 @@ def main() -> int:
         base = Path(temp)
         safe = base / "safe"
         unsafe = base / "unsafe"
+        ignored_secret = base / "ignored-secret"
         safe.mkdir()
         unsafe.mkdir()
+        ignored_secret.mkdir()
 
         (safe / "README.md").write_text(SAFE_README, encoding="utf-8")
         (safe / "LICENSE").write_text("MIT License\n", encoding="utf-8")
@@ -111,6 +113,15 @@ def main() -> int:
         categories = {item["category"] for item in payload["findings"]}
         assert "sensitive filename" in categories, payload
         assert "sensitive data file" in categories, payload
+
+        (ignored_secret / ".gitignore").write_text(".env*\n", encoding="utf-8")
+        (ignored_secret / ".env.local").write_text(f"{credential_name}={secret_value}\n", encoding="utf-8")
+        code, payload = run_json("preflight.py", str(ignored_secret))
+        assert code == 1, payload
+        assert payload["status"] == "WARNING", payload
+        sensitive = [item for item in payload["findings"] if item["category"] == "sensitive filename"]
+        assert sensitive and sensitive[0]["severity"] == "WARNING", payload
+        assert secret_value not in json.dumps(payload), "ignored secret value leaked in scanner output"
 
     print("vibe-to-github checks passed")
     return 0
