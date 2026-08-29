@@ -230,10 +230,6 @@ def scan_git_metadata(root: Path, repository: Path | None, history: bool) -> tup
     if remotes.returncode == 0 and re.search(r"(?i)https?://[^/@\s:]+:[^/@\s]+@", remotes.stdout):
         findings.append(Finding("BLOCKED", "remote credential", ".git/config", "a remote URL appears to contain embedded credentials"))
 
-    status = run_git(root, ["status", "--porcelain"])
-    if status.returncode == 0 and not status.stdout.strip():
-        findings.append(Finding("WARNING", "Git state", ".", "working tree is clean; confirm intended release files are already committed"))
-
     if not history:
         findings.append(Finding("WARNING", "history coverage", ".git", "history scan not requested; rerun with --history before publication"))
         return findings, "not requested"
