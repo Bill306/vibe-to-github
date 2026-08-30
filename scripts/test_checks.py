@@ -79,14 +79,18 @@ def main() -> int:
         safe = base / "safe"
         unsafe = base / "unsafe"
         ignored_secret = base / "ignored-secret"
+        version_conflict = base / "version-conflict"
+        no_version = base / "no-version"
         safe.mkdir()
         unsafe.mkdir()
         ignored_secret.mkdir()
+        version_conflict.mkdir()
+        no_version.mkdir()
 
         (safe / "README.md").write_text(SAFE_README, encoding="utf-8")
         (safe / "LICENSE").write_text("MIT License\n", encoding="utf-8")
         (safe / "package.json").write_text(
-            json.dumps({"scripts": {"build": "node -e \"process.exit(0)\""}, "dependencies": {"next": "1.0.0"}}),
+            json.dumps({"version": "0.3.0", "scripts": {"build": "node -e \"process.exit(0)\""}, "dependencies": {"next": "1.0.0"}}),
             encoding="utf-8",
         )
         (safe / ".gitignore").write_text("node_modules/\n.env*\n!.env.example\n", encoding="utf-8")
@@ -94,6 +98,14 @@ def main() -> int:
         code, payload = run_json("validate_readme.py", str(safe))
         assert code == 0, payload
         assert payload["status"] == "PASS", payload
+
+        code, payload = run_json("detect_version.py", str(safe))
+        assert code == 0, payload
+        assert payload["status"] == "DETECTED", payload
+        assert payload["current_version"] == "0.3.0", payload
+        assert payload["suggestions"]["patch"] == "0.3.1", payload
+        assert payload["suggestions"]["minor"] == "0.4.0", payload
+        assert payload["suggestions"]["major"] == "1.0.0", payload
 
         (unsafe / "README.md").write_text("# Broken\n\nTODO: document this.\n", encoding="utf-8")
         secret_value = "live_" + "fixturecredentialvalue1234567890"
@@ -122,6 +134,35 @@ def main() -> int:
         sensitive = [item for item in payload["findings"] if item["category"] == "sensitive filename"]
         assert sensitive and sensitive[0]["severity"] == "WARNING", payload
         assert secret_value not in json.dumps(payload), "ignored secret value leaked in scanner output"
+
+        (version_conflict / "package.json").write_text(json.dumps({"version": "0.3.0"}), encoding="utf-8")
+        (version_conflict / "pyproject.toml").write_text('[project]\nversion = "0.4.0"\n', encoding="utf-8")
+        code, payload = run_json("detect_version.py", str(version_conflict))
+        assert code == 2, payload
+        assert payload["status"] == "CONFLICT", payload
+        assert payload["current_version"] is None, payload
+
+        code, payload = run_json("detect_version.py", str(no_version))
+        assert code == 1, payload
+        assert payload["status"] == "NEEDS_INPUT", payload
+        assert payload["requires_user_confirmation"] is True, payload
+
+        (no_version / "seed.txt").write_text("tag-only fixture\n", encoding="utf-8")
+        for command in (
+            ["git", "init", "-q"],
+            ["git", "config", "user.name", "Fixture"],
+            ["git", "config", "user.email", "fixture@example.invalid"],
+            ["git", "add", "seed.txt"],
+            ["git", "commit", "-q", "-m", "fixture"],
+            ["git", "tag", "v1.2.3"],
+        ):
+            result = subprocess.run(command, cwd=no_version, check=False, capture_output=True, text=True)
+            assert result.returncode == 0, result.stderr
+        code, payload = run_json("detect_version.py", str(no_version))
+        assert code == 1, payload
+        assert payload["status"] == "NEEDS_INPUT", payload
+        assert payload["current_version"] == "1.2.3", payload
+        assert payload["latest_semantic_tag"] == "v1.2.3", payload
 
     print("vibe-to-github checks passed")
     return 0

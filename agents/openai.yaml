@@ -1,4 +1,4 @@
 interface:
   display_name: "Vibe to GitHub"
   short_description: "安全整理、验证并发布 vibe-coded 项目到 GitHub"
-  default_prompt: "Use $vibe-to-github to audit this local project, create an accurate README, recommend a license, and prepare a confirmation-gated GitHub publication."
+  default_prompt: "Use $vibe-to-github to audit this local project, create an accurate README, recommend a license, confirm the release version, and prepare a confirmation-gated GitHub publication."

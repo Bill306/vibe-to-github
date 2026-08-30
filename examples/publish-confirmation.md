@@ -11,6 +11,9 @@ Default branch: main
 Files: README.md, LICENSE, .gitignore, .env.example, existing source files
 README: PASS
 License: MIT, copyright holder confirmed by user
+Detected current version: 0.3.0 from package.json
+Confirmed release version: 0.4.0 (minor)
+Version actions: update package.json and commit; do not create a tag or GitHub Release
 Security: PASS
 History coverage: gitleaks plus historical filename scan
 Verification: lint, typecheck, test, and build passed

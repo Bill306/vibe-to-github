@@ -14,6 +14,7 @@ Vibe-coded projects often work on the creator's machine but reach GitHub with an
 - **README contract** — Requires the problem, main features, installation, usage, and a realistic input/output example.
 - **Adaptive formatting** — Selects an App/Product, Library/CLI, or Community/Content template instead of forcing one layout onto every project.
 - **License decision gate** — Explains common software and content choices, checks third-party boundaries, and asks the user to confirm.
+- **Version confirmation gate** — Detects common manifest versions and Git tags, then asks the user to confirm the current and intended release version.
 - **Read-only preflight** — Reports possible secrets, private data, local paths, artifacts, large files, risky Git history, and remote credentials without printing matched values.
 - **Publication manifest** — Shows visibility, repository target, changed files, license, safety coverage, and verification evidence before any remote mutation.
 - **Narrow Git behavior** — Avoids force-push, history rewrites, remote replacement, inferred deployment, and broad staging in dirty workspaces.
@@ -48,6 +49,7 @@ Run the deterministic checks directly when needed:
 
 ```bash
 python3 scripts/preflight.py /path/to/my-project --history
+python3 scripts/detect_version.py /path/to/my-project
 python3 scripts/validate_readme.py /path/to/my-project
 ```
 
@@ -66,6 +68,7 @@ Status: BLOCKED
 README: missing input/output example
 Security: possible credential file at .env.local
 History coverage: filename-only scan; gitleaks unavailable
+Detected version: 0.3.0 from package.json; release version awaiting confirmation
 Remote action: none performed
 Next action: rotate any real exposed credential, create a sanitized .env.example,
 and rerun the checks after the user approves the local changes.
@@ -93,6 +96,7 @@ The Skill reports filenames and finding types, not secret values.
 
 - Heuristic secret and privacy checks can produce false positives and false negatives.
 - Full content-level Git-history scanning requires a compatible external scanner such as gitleaks.
+- Version detection covers common manifests and semantic Git tags, but projects with custom or dynamic version sources require manual confirmation.
 - The README validator can check structure and some command consistency, but it cannot prove that prose accurately describes business behavior.
 - License guidance is educational and is not legal advice.
 - A successful build or push does not prove production correctness or security.

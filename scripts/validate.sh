@@ -6,10 +6,10 @@ SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 required=(
   SKILL.md README.md README.zh-CN.md LICENSE AGENTS.md agents/openai.yaml
   references/publishing-workflow.md references/readme-patterns.md
-  references/license-guide.md references/security-checklist.md
+  references/license-guide.md references/versioning-guide.md references/security-checklist.md
   assets/templates/app-product.md assets/templates/library-cli.md
   assets/templates/community-content.md scripts/preflight.py
-  scripts/validate_readme.py scripts/test_checks.py
+  scripts/detect_version.py scripts/validate_readme.py scripts/test_checks.py
 )
 
 for relative in "${required[@]}"; do
@@ -23,6 +23,7 @@ grep -Fq '[English](README.md)' "$SKILL_DIR/README.zh-CN.md"
 
 python3 -m py_compile \
   "$SKILL_DIR/scripts/preflight.py" \
+  "$SKILL_DIR/scripts/detect_version.py" \
   "$SKILL_DIR/scripts/validate_readme.py" \
   "$SKILL_DIR/scripts/test_checks.py"
 

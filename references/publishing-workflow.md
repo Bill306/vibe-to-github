@@ -33,6 +33,7 @@ Run the bundled checks from the Skill directory:
 
 ```bash
 python3 scripts/preflight.py /absolute/project/path --history
+python3 scripts/detect_version.py /absolute/project/path
 python3 scripts/validate_readme.py /absolute/project/path
 ```
 
@@ -58,6 +59,9 @@ Remote action: create owner/name | update verified origin
 Visibility: public | private | internal
 Branch: main
 License: SPDX identifier or All Rights Reserved
+Current version: detected value and canonical source
+Release version: exact user-confirmed value
+Version actions: edit | commit | tag | push tag | GitHub Release | package publish
 Files: explicit path list
 README: PASS | WARNING | BLOCKED
 Security: PASS | WARNING | BLOCKED
@@ -74,8 +78,8 @@ For a new isolated repository, initialize Git only at the confirmed project root
 
 For GitHub CLI, first check authentication and target ownership. Use the visibility the user confirmed. Do not initialize a GitHub repository with extra README, ignore, or license options when pushing an existing local history because that can create an avoidable merge conflict.
 
-Never replace an existing remote automatically. Never use `--force` or rewrite history as a normal publishing step.
+Never replace an existing remote automatically. Never use `--force` or rewrite history as a normal publishing step. Do not create a tag, GitHub Release, or registry publication unless the manifest authorizes that exact action.
 
 ## 6. Verify remotely
 
-Verify at least the URL, owner/name, visibility, default branch, expected commit and files, README rendering, and license detection. If a secret is found after publication, prioritize credential rotation or revocation. Removing it from the latest tree does not remove it from history or copies.
+Verify at least the URL, owner/name, visibility, default branch, expected commit and files, README rendering, license detection, and confirmed version source. Verify the tag and GitHub Release only when they were requested. If a secret is found after publication, prioritize credential rotation or revocation. Removing it from the latest tree does not remove it from history or copies.

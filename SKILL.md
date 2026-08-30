@@ -1,6 +1,6 @@
 ---
 name: vibe-to-github
-description: Prepare and publish locally built or vibe-coded apps, libraries, CLIs, and content projects as trustworthy GitHub repositories. Use when a user asks to make a project GitHub-ready, write or improve its README, choose a license, audit secrets and private data, initialize Git safely, create a GitHub repository, or push an existing local project. Supports prepare-only and publish modes, with mandatory README, license, security, validation, visibility, and explicit remote-action gates.
+description: Prepare and publish locally built or vibe-coded apps, libraries, CLIs, and content projects as trustworthy GitHub repositories. Use when a user asks to make a project GitHub-ready, write or improve its README, choose a license, detect or confirm a release version, audit secrets and private data, initialize Git safely, create a GitHub repository, or push an existing local project. Supports prepare-only and publish modes, with mandatory README, license, version, security, validation, visibility, and explicit remote-action gates.
 ---
 
 # Vibe to GitHub
@@ -37,6 +37,7 @@ Derive these facts from the project, then ask only for facts that cannot be veri
 - Input and output examples
 - Project type: App/Product, Library/CLI, or Community/Content
 - Existing deployment URL and screenshots, if real
+- Declared version sources and existing Git tags
 - Proposed repository name, owner, visibility, and license
 
 Never invent a feature, command, screenshot, compatibility claim, benchmark, test result, or badge status.
@@ -70,7 +71,21 @@ Read [references/license-guide.md](references/license-guide.md). Recommend rathe
 
 Check third-party code, fonts, images, models, and datasets separately. Ask the user to confirm the final choice and copyright holder. Do not provide legal certainty.
 
-### 5. Create or repair the README
+### 5. Detect and confirm the version
+
+Read [references/versioning-guide.md](references/versioning-guide.md), then run:
+
+```bash
+python3 scripts/detect_version.py /absolute/path/to/project
+```
+
+Report every detected version source and the latest semantic Git tag. If sources disagree, stop and ask which source is canonical. If no version exists, ask whether this is an experimental first release or a stable public release; do not silently choose `0.1.0` or `1.0.0`.
+
+Always ask the user to confirm both the detected current version and the exact intended release version. When the user chooses Patch, Minor, Major, or Prerelease, show the resulting version number before editing files.
+
+Treat these as separate actions: edit version files, commit the change, create a tag, push a tag, create a GitHub Release, and publish a package. Do not infer one authorization from another.
+
+### 6. Create or repair the README
 
 Read [references/readme-patterns.md](references/readme-patterns.md) and select the matching template under `assets/templates/`.
 
@@ -92,13 +107,13 @@ python3 scripts/validate_readme.py /absolute/path/to/project
 
 Resolve every `BLOCKED` finding. A `WARNING` must be explained, not hidden.
 
-### 6. Verify the project
+### 7. Verify the project
 
 Infer verification commands from repository evidence, such as manifest scripts, documented commands, or existing CI. Prefer the smallest relevant sequence: formatting or lint, typecheck, tests, build, then a smoke check when safe.
 
 Do not invent missing commands. Do not start long-running services without a bounded check. Record the exact command, exit status, and what it actually proves. Report unavailable or failing verification as `PARTIAL` or `BLOCKED` according to impact.
 
-### 7. Present the publication manifest
+### 8. Present the publication manifest
 
 Before any remote mutation, show:
 
@@ -110,28 +125,32 @@ Before any remote mutation, show:
 - Files to add or change
 - README validation result
 - License choice and copyright holder
+- Detected current version, source of truth, confirmed release version, and authorized version/tag/release actions
 - Safety result, including history-scan coverage
 - Test/build/smoke results and known gaps
 - Exact GitHub action proposed
 
 Ask for explicit confirmation of this manifest. A prior general request to "put it on GitHub" does not authorize an unspecified public repository, remote replacement, history rewrite, or visibility change.
 
-### 8. Publish narrowly
+### 9. Publish narrowly
 
 After confirmation:
 
 1. Re-run the safety check against the final working tree and staged diff.
-2. Stage explicit approved paths. Avoid `git add -A` when unrelated files exist.
-3. Create a normal commit with an accurate message.
-4. Use the confirmed owner, repository name, and visibility.
-5. If a remote already exists, verify it instead of replacing it.
-6. Push without force.
+2. Apply the exact confirmed version change only when authorized, then rerun relevant validation.
+3. Stage explicit approved paths. Avoid `git add -A` when unrelated files exist.
+4. Create a normal commit with an accurate message.
+5. Use the confirmed owner, repository name, and visibility.
+6. If a remote already exists, verify it instead of replacing it.
+7. Push without force.
+
+Create or push a Git tag, GitHub Release, or package only when each action appears in the confirmed manifest.
 
 Do not enable GitHub Pages, Actions secrets, Vercel, releases, packages, or collaborator access unless separately requested.
 
-### 9. Verify the remote outcome
+### 10. Verify the remote outcome
 
-Confirm the repository URL, visibility, default branch, commit, README rendering, license detection, and expected files. If possible, verify cloneability from a clean temporary location. Distinguish:
+Confirm the repository URL, visibility, default branch, commit, README rendering, license detection, version source, and expected files. Verify tags or releases only when they were explicitly requested. If possible, verify cloneability from a clean temporary location. Distinguish:
 
 - `READY`: local checks and remote verification passed.
 - `PARTIAL`: publication succeeded but named checks are missing or failing.
@@ -144,8 +163,10 @@ Return the repository link only when it was actually verified.
 - [references/publishing-workflow.md](references/publishing-workflow.md): command-level prepare and publish procedure.
 - [references/readme-patterns.md](references/readme-patterns.md): project-type templates and formatting rules learned from strong GitHub READMEs.
 - [references/license-guide.md](references/license-guide.md): license decision guide and confirmation questions.
+- [references/versioning-guide.md](references/versioning-guide.md): version-source detection, SemVer choices, and separate tag/release authorization.
 - [references/security-checklist.md](references/security-checklist.md): secret, privacy, path, artifact, history, and dependency checks.
 - `scripts/preflight.py`: read-only heuristic project and Git-history audit.
+- `scripts/detect_version.py`: read-only manifest and semantic Git-tag version detection.
 - `scripts/validate_readme.py`: deterministic README structure and command-consistency checks.
 - `assets/templates/`: adaptable README starting points; replace every placeholder with verified project facts.
 
