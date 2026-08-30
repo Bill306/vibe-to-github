@@ -1,5 +1,7 @@
 # vibe-to-github
 
+**English** | [简体中文](README.zh-CN.md)
+
 `vibe-to-github` is a Codex Skill for turning a local vibe-coded project into a GitHub repository that another person can understand, run, and trust.
 
 ## Problem
@@ -75,6 +77,8 @@ The Skill reports filenames and finding types, not secret values.
 
 ```text
 .
+├── README.md
+├── README.zh-CN.md
 ├── SKILL.md
 ├── agents/openai.yaml
 ├── assets/templates/
