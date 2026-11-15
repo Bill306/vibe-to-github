@@ -1,5 +1,7 @@
 # vibe-to-github
 
+给下一位打开项目的人，留足能够开始尝试的信息。
+
 [English](README.md) | **简体中文**
 
 `vibe-to-github` 是一个 Codex Skill，用于把本地 vibe coded 项目整理成别人能够看懂、运行并信任的 GitHub 仓库。

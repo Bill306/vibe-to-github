@@ -4,6 +4,16 @@
 
 `vibe-to-github` is a Codex Skill for turning a local vibe-coded project into a GitHub repository that another person can understand, run, and trust.
 
+Give the next person enough context to say, “I can try this.”
+
+```mermaid
+flowchart LR
+  A[Local project] --> B[Review]
+  B --> C[Prepare README and checks]
+  C --> D[Reviewable publication manifest]
+  D --> E[Authorized publication]
+```
+
 ## Problem
 
 Vibe-coded projects often work on the creator's machine but reach GitHub with an inaccurate README, unclear setup steps, accidental credentials, private data, local paths, generated files, or an unconsidered license. This Skill makes those checks part of the publishing workflow and separates local preparation from remote authorization.
